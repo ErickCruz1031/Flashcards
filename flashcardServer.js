@@ -157,11 +157,19 @@ function fileNotFound(req, res) {
 // is called (in /auth/redirect/),
 // once we actually have the profile data from Google. 
 function gotProfile(accessToken, refreshToken, profile, done) {
-    console.log("Google profile ID is ",profile.id);
+    console.log("Google profile ID is ",profile);
     // here is a good place to check if user is in DB,
     // and to store him in DB if not already there. 
     // Second arg to "done" will be passed into serializeUser,
-    // should be key to get user out of database.
+	// should be key to get user out of database.
+	
+	//Check if the user is already in the database
+
+
+	
+	let searchCmd = 'SELECT * FROM UserInformation WHERE GoogleID = '+ profile.id;
+	db.run(searchCmd, tableSearchCallback(profile));
+
 
     let dbRowID = profile.id;  // temporary! Should be the real unique
     // key for db Row for this user in DB table.
@@ -169,6 +177,49 @@ function gotProfile(accessToken, refreshToken, profile, done) {
     // True.  
 
     done(null, dbRowID); 
+}
+
+// Always use the callback for database operations and print out any
+// error messages you get.
+// This database stuff is hard to debug, give yourself a fighting chance.
+function tableSearchCallback(prof, err, rowdata) {
+    if (err) {
+	console.log("Table creation error",err);
+    } else {
+		if (rowdata == null)
+		{
+			console.log("We are adding the new user");
+			
+			let cmdStr = 'INSERT INTO UserInformation(GoogleID, firstName, lastName) VALUES(@0, @1, @2)';
+
+			//console.log("The command is the following: \n" + cmdStr);
+			db.run(cmdStr, prof.id , prof.name.givenName,  prof.name.familyName, tableInsertCallback);
+			
+
+
+			console.log("IT WAS NULLLLL");
+		}//This is when you add a new user
+		console.log("the ID is ", prof.id);
+
+		dumpDBUser();
+    }
+}
+
+
+
+function dumpDBUser() {
+	db.all ( 'SELECT * FROM UserInformation', dataCallback);
+	function dataCallback( err, data ) {console.log(data)}
+}
+
+
+
+function tableInsertCallback(err) {
+    if (err) {
+	console.log("Table creation error",err);
+    } else {
+		console.log("We added the new user!");
+    }
 }
 
 // Part of Server's sesssion set-up.  

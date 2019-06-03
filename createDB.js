@@ -12,7 +12,7 @@ const db = new sqlite3.Database(dbFileName);  // object, not database.
 const cmdStr = 'CREATE TABLE Flashcards (user INT , english TEXT, spanish TEXT, seen INT, correct INT)';
 db.run(cmdStr,tableCreationCallback);
 
-const cmdStr2 = 'CREATE TABLE UserInformation (GoogleID INT, firstName TEXT, lastName TEXT)';
+const cmdStr2 = 'CREATE TABLE UserInformation (GoogleID TEXT, firstName TEXT, lastName TEXT)';
 db.run(cmdStr2, tableCreationCallback);
 
 // Always use the callback for database operations and print out any
