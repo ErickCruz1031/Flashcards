@@ -401,6 +401,17 @@ table {
 
     }
 
+    #next-button{
+        
+        background-color: #606B9B;
+        color: white;
+        border-radius: 5px;
+        font-size: 25px; 
+        font-family: helvetica;
+
+    }
+
+
     .input-boxes{
 
         padding-top: 5%;

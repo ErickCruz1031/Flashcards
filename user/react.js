@@ -1,5 +1,9 @@
 'use strict';
 
+//makeRegDOM();
+let review = false;
+
+
 function TopCreation() {
 
     return React.createElement(
@@ -80,7 +84,7 @@ function LowButton() {
 
                 React.createElement(
                     "button",
-                    { id: "save-button" },
+                    { id: "save-button", onClick: makeCorsRequestSave},
                     " Save "
                 )
             )
@@ -100,7 +104,7 @@ function LowButtonNext() {
 
                 React.createElement(
                     "button",
-                    { id: "save-button" },
+                    { id: "next-button" , onClick: renderNextCard},
                     " Next "
                 )
             )
@@ -162,11 +166,14 @@ function createReviewDOM()
     );
 }
 
+
 function makeReviewDOM()
 {
-    console.log("????");
+
+    document.removeEventListener('keypress', makeCorsRequestTranslate);
     makeCorsRequestGetCards();
     ReactDOM.render(createReviewDOM(), document.getElementById('root'));
+    document.addEventListener('keypress', renderCard);
     //document.getElementById("addButton").addEventListener('click', makeRegDOM);
     console.log("It was called");
     return;
@@ -174,17 +181,32 @@ function makeReviewDOM()
 
 function makeRegDOM()
 {
+    document.removeEventListener('keypress', renderCard);
     ReactDOM.render(createDOM(), document.getElementById('root'));
+    document.addEventListener('keypress', makeCorsRequestTranslate);
+    //document.getElementById("save-button").addEventListener('click', makeCorsRequestSave);
     //document.getElementById("startButton").addEventListener('click', makeReviewDOM);
     console.log("YEA the other one");
     return;
 
 }
 
-console.log("HELP");
+function renderNextCard()
+{
+    ReactDOM.render(createReviewDOM(), document.getElementById('root'));
+    nextCard();
+    console.log("We just did the new function");
+    return;
+}
+
+
+console.log("Creating the DOM");
 ReactDOM.render(createDOM(), document.getElementById('root'));
 document.addEventListener('keypress', makeCorsRequestTranslate);
-document.getElementById("save-button").addEventListener('click', makeCorsRequestSave);
+//document.addEventListener('keypress', makeCorsRequestTranslate);
+//document.getElementById("save-button").addEventListener('click', makeCorsRequestSave);
+
+
 //document.getElementById("startButton").addEventListener('click', makeReviewDOM);
 
 //ReactDOM.render(BoxContr(), document.getElementById('root'));

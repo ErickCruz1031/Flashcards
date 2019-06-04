@@ -2,9 +2,46 @@
 
 // Do a CORS request to get Davis weather hourly forecast
 
-let cards = null 
-function renderCard(){
-  console.log("In here");
+let cards = null;
+let lastIndex = 0;
+
+
+
+function nextCard(){
+  if (lastIndex >= cards.length)
+  {
+    console.log("We ran out of cards");
+    return;
+  } //Check if you are out of cards
+  document.getElementById("box-one-review").placeholder = cards[lastIndex].spanish;
+  document.getElementById("box-two-review").placeholder = "Answer";
+  lastIndex += 1;
+
+}
+
+function renderCard(event){
+  if(event.charCode != 13)
+  {
+    return;
+  }
+
+  let input = document.getElementById("box-two-review").value; //The user input 
+  document.getElementById("box-two-review").value = ""; //The user input 
+  let answerString = cards[lastIndex].spanish;
+  let an_key = answerString.toLowerCase();
+  console.log("The key is ", an_key, " and the input is ", input);
+  console.log("The index is ", lastIndex);
+  if (input == an_key)
+  {
+    document.getElementById("box-two-review").placeholder = "Correct!";
+  }
+  else
+  {
+    document.getElementById("box-two-review").value = cards[lastIndex].english;
+    console.log("WE put inside ",cards[lastIndex].english );
+  }
+
+  return;
 }
 
 
@@ -18,7 +55,7 @@ function createCORSRequest(method, url) {
 
 
 // Make the actual CORS request to retrieve cards
-function makeCorsRequestGetCards(event) {
+function makeCorsRequestGetCards() {
 
   let url = "getCards";
 
@@ -42,6 +79,7 @@ function makeCorsRequestGetCards(event) {
       console.log("Now the cards object is ", cards);
       //console.log(responseStr);  // print it out as a string, nicely formatted
       //console.log("The spanish is " + object.spanish);
+      nextCard(); //To render the new card
 
   };
 
@@ -63,6 +101,8 @@ function makeCorsRequestTranslate(event) {
   {
     return;
   }
+
+
 
   let phrase = document.getElementById("box-one").value;
   //console.log("the input was " + phrase);
