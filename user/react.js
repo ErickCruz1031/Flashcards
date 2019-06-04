@@ -12,7 +12,7 @@ function TopCreation() {
 
                 React.createElement(
                     "button",
-                    { id: "startButton" },
+                    { id: "startButton" ,  onClick: makeReviewDOM},
                     "Start Review "
                 ),
             ),
@@ -37,7 +37,7 @@ function TopCreationReview() {
 
                 React.createElement(
                     "button",
-                    { id: "addButton"},
+                    { id: "addButton",onClick: makeRegDOM},
                     " Add "
                 ),
             ),
@@ -164,8 +164,9 @@ function createReviewDOM()
 
 function makeReviewDOM()
 {
+    console.log("????");
     ReactDOM.render(createReviewDOM(), document.getElementById('root'));
-    document.getElementById("addButton").addEventListener('click', makeRegDOM);
+    //document.getElementById("addButton").addEventListener('click', makeRegDOM);
     console.log("It was called");
     return;
 }
@@ -179,11 +180,11 @@ function makeRegDOM()
 
 }
 
-
+console.log("HELP");
 ReactDOM.render(createDOM(), document.getElementById('root'));
 document.addEventListener('keypress', makeCorsRequestTranslate);
 document.getElementById("save-button").addEventListener('click', makeCorsRequestSave);
-document.getElementById("startButton").addEventListener('click', makeReviewDOM);
+//document.getElementById("startButton").addEventListener('click', makeReviewDOM);
 
 //ReactDOM.render(BoxContr(), document.getElementById('root'));
 //ReactDOM.render(LowButton(), document.getElementById('root'));

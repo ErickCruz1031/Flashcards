@@ -1,3 +1,3 @@
 function createDiv(){
-    return <button href="auth/google">Login with Google</button>;
+    return <button onclick="makeReviewDOM()">Login with Google</button>;
 }
