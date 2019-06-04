@@ -61,6 +61,10 @@ app.use(passport.initialize());
 // If there is a valid cookie, will call deserializeUser()
 app.use(passport.session()); 
 
+
+
+//app.get('/translate', handler);
+//app.post('/store', storeHandle);
 // Public static files
 app.get('/*',express.static('public'));
 
@@ -105,14 +109,19 @@ app.get('/user/*',
        ); 
 
 // next, all queries (like translate or store or get...
-app.get('/query', function (req, res) { res.send('HTTP query!') });
+//app.get('/query', function (req, res) { res.send('HTTP query!') });
 
 //app.use(express.static('public'));
-app.get('/translate', handler);
-app.post('/store', storeHandle);
+app.get('/user/translate', handler);
+app.post('/user/store', storeHandle);
+//app.get('/translate', handler);
+//app.post('/store', storeHandle);
+
+
 
 // finally, not found...applies to everything
 app.use( fileNotFound );
+
 
 // Pipeline is ready. Start listening!  
 //app.listen(53232, function (){console.log('Listening...');} );
@@ -166,17 +175,38 @@ function gotProfile(accessToken, refreshToken, profile, done) {
 	//Check if the user is already in the database
 
 
-	
-	let searchCmd = 'SELECT * FROM UserInformation WHERE GoogleID = '+ profile.id;
-	db.run(searchCmd, tableSearchCallback(profile));
+	/*
+	let searchCmd = "SELECT * FROM UserInformation WHERE GoogleID ='"+ profile.id + "'";
+	//let searchCmd = 'SELECT ' +  profile.id + ' FROM UserInformation';
+	console.log("THe search command was ", searchCmd);
+	db.get(searchCmd, tableSearchCallback(profile));
+	*/
 
+	let searchCmd = "SELECT * FROM UserInformation WHERE GoogleID ='"+ profile.id + "'";
+	console.log("THe search command was ", searchCmd);
+	db.all(searchCmd, (err, row) => {
+		if (err){
+			console.log("There was an error in this");
+		}
+		if (row){
+			console.log("IT IS HER");
+			console.log(row);
+			done(null, dbRowID); 
+		}
+		else{
+			console.log("WE NEED TO ADD IT");
+			done(null, dbRowID); 
+		}
+	});
 
     let dbRowID = profile.id;  // temporary! Should be the real unique
     // key for db Row for this user in DB table.
     // Note: cannot be zero, has to be something that evaluates to
     // True.  
 
-    done(null, dbRowID); 
+
+	//THis was comemnted out
+    //done(null, dbRowID); 
 }
 
 // Always use the callback for database operations and print out any
@@ -186,15 +216,24 @@ function tableSearchCallback(prof, err, rowdata) {
     if (err) {
 	console.log("Table creation error",err);
     } else {
+		console.log("ZThis was returned:", rowdata)
 		if (rowdata == null)
 		{
 			console.log("We are adding the new user");
+			console.log("ERR is ", err);
+			/*
 			
 			let cmdStr = 'INSERT INTO UserInformation(GoogleID, firstName, lastName) VALUES(@0, @1, @2)';
 
 			//console.log("The command is the following: \n" + cmdStr);
 			db.run(cmdStr, prof.id , prof.name.givenName,  prof.name.familyName, tableInsertCallback);
+			*/
+
 			
+			let cmdStr = 'INSERT INTO UserInformation(GoogleID, firstName, lastName) VALUES(@0, @1, @2)';
+
+			//console.log("The command is the following: \n" + cmdStr);
+			db.run(cmdStr, prof.id , prof.name.givenName,  prof.name.familyName, tableInsertCallback);
 
 
 			console.log("IT WAS NULLLLL");
@@ -202,7 +241,9 @@ function tableSearchCallback(prof, err, rowdata) {
 		console.log("the ID is ", prof.id);
 
 		dumpDBUser();
-    }
+	}
+	
+	
 }
 
 
@@ -240,7 +281,7 @@ passport.deserializeUser((dbRowID, done) => {
     // here is a good place to look up user data in database using
     // dbRowID. Put whatever you want into an object. It ends up
     // as the property "user" of the "req" object. 
-    let userData = {userData: "data from db row goes here"};
+    let userData = {userData: dbRowID};
     done(null, userData);
 });
 
@@ -278,10 +319,10 @@ function storeHandle(req, res){
 
 	//console.log("The english is " + queryData.english);
 	//console.log("The spanish was " + queryData.spanish);
-	let cmdStr = 'INSERT INTO Flashcards (user, english, spanish, seen, correct) VALUES(1, @0, @1, 0, 0)';
+	let cmdStr = 'INSERT INTO Flashcards (user, english, spanish, seen, correct) VALUES(@0, @1, @2, 0, 0)';
 
 	//console.log("The command is the following: \n" + cmdStr);
-	db.run(cmdStr, queryData.english, queryData.spanish,  insertCallback);
+	db.run(cmdStr, req.user.userData, queryData.english, queryData.spanish,  insertCallback);
 
 }
 function handler(req, res){
@@ -292,6 +333,7 @@ function handler(req, res){
 //	console.log("The whole url is the following: " + url);
 
 	console.log("This is a translation");
+	console.log("The user if is ", req.user.userData);
 	let requestObject =
 	{
 	"source": "en",
