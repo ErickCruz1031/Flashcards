@@ -165,6 +165,7 @@ function createReviewDOM()
 function makeReviewDOM()
 {
     console.log("????");
+    makeCorsRequestGetCards();
     ReactDOM.render(createReviewDOM(), document.getElementById('root'));
     //document.getElementById("addButton").addEventListener('click', makeRegDOM);
     console.log("It was called");

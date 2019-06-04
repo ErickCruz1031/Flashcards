@@ -113,6 +113,7 @@ app.get('/user/*',
 
 //app.use(express.static('public'));
 app.get('/user/translate', handler);
+app.get('/user/getCards', retrieveCards);
 app.post('/user/store', storeHandle);
 //app.get('/translate', handler);
 //app.post('/store', storeHandle);
@@ -310,9 +311,6 @@ function storeHandle(req, res){
 		}
 	}
 
-
-
-
 	let queryData = urlParse.parse(req.url, true).query;
 	console.log(queryData)
 	//console.log("we got a storing function")
@@ -323,6 +321,28 @@ function storeHandle(req, res){
 
 	//console.log("The command is the following: \n" + cmdStr);
 	db.run(cmdStr, req.user.userData, queryData.english, queryData.spanish,  insertCallback);
+
+}
+
+function retrieveCards(req, res){
+	console.log("You asked to get teh cards for ", req.user.userData);
+
+	let searchCmd = "SELECT * FROM Flashcards WHERE user ='"+ req.user.userData+ "'";
+	db.all(searchCmd, (err, rows) => {
+		if (err){
+			console.log("There was an error in this");
+			res.send("THere was an error");
+		}
+		if (rows){
+			console.log("Here is the result");
+			console.log(rows);
+			res.json(rows);
+		}
+		else{
+			console.log("it was empty?")
+			res.send("Nothing is there");
+		}
+	});
 
 }
 function handler(req, res){
