@@ -69,6 +69,54 @@ table {
         height: 100%;
     }
 
+
+    .input-boxes-review{
+        display: flex;
+        padding-top: 5%;
+        flex-direction: column;
+        justify-content: space-evenly;
+        height: 60%;
+        width: 100%;
+    }
+
+    .box-r{
+        display: flex;
+        flex-direction: column;
+        width: 70%;
+        height: 40%;
+        justify-content: space-between;
+        font-size: 20px;
+        box-shadow: 0 0 10px #719ECE;
+        align-self: center;
+        
+    }
+
+    #box-two-review{
+        height: 20%;
+    }
+    
+   #next-button{
+    background-color: rgb(95, 189, 143);
+    color: white;
+    border-radius: 5px;
+    font-family: helvetica;
+
+    
+    font-size: 17px; 
+        
+    }
+
+    #addButton{
+        
+        background-color: #606B9B;
+        color: white;
+        border-radius: 3px;
+        font-size: 10px; 
+        font-family: helvetica;
+
+    }
+
+
     #root{
         min-height: 100%;
     }
@@ -112,8 +160,8 @@ table {
     }
     .input-boxes{
 
-        padding-top: 2%;
-        height: 40%;
+        padding-top: 5%;
+        height: 60%;
         display: flex;
         flex-wrap: wrap;
         flex-direction: column;
@@ -142,7 +190,7 @@ table {
     }
     .lower-button-class{
         padding-left: 75%;
-        padding-top: 10%;
+        padding-top: 15%;
         align-self: flex-end;
 
     }
@@ -215,20 +263,25 @@ table {
         padding-top: 5%;
         flex-direction: column;
         justify-content: space-evenly;
-        height: 40%;
+        height: 60%;
         width: 100%;
     }
+
 
     .box-r{
         display: flex;
         flex-direction: column;
         width: 70%;
-        height: 40%;
+        height: 45%;
         justify-content: space-between;
         font-size: 20px;
         box-shadow: 0 0 10px #719ECE;
         align-self: center;
         
+    }
+
+    #box-two-review{
+        height: 20%;
     }
     
    #next-button{
@@ -245,6 +298,7 @@ table {
 
     .top{
         padding-top: 8%;
+        padding-left: 2%;
         display: flex;
         flex-direction: row;
         flex-wrap: nowrap;
@@ -323,7 +377,7 @@ table {
 
     .lower-button-class{
         padding-left: 82%;
-        padding-top: 8%;
+        padding-top: 14%;
         align-self: flex-end;
 
     }
