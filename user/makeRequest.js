@@ -116,8 +116,10 @@ function makeCorsRequestGetCards() {
       console.log("The othe rone is ", responseStr);
       console.log("The length is ",object.length)
       console.log("The other one with length is ",responseStr.length)
-      cards = object;
+      cards = object.cards;
       console.log("Now the cards object is ", cards);
+      console.log("The name is ", object.name);
+      document.getElementById("footer-name").textContent = object.name;
       //console.log(responseStr);  // print it out as a string, nicely formatted
       //console.log("The spanish is " + object.spanish);
       nextCard(); //To render the new card

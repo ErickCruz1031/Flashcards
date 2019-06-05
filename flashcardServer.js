@@ -182,25 +182,41 @@ function gotProfile(accessToken, refreshToken, profile, done) {
 	console.log("THe search command was ", searchCmd);
 	db.get(searchCmd, tableSearchCallback(profile));
 	*/
+	let dbRowID = profile.id;
 
 	let searchCmd = "SELECT * FROM UserInformation WHERE GoogleID ='"+ profile.id + "'";
 	console.log("THe search command was ", searchCmd);
 	db.all(searchCmd, (err, row) => {
 		if (err){
+			dumpDBUser();
 			console.log("There was an error in this");
-		}
-		if (row){
-			console.log("IT IS HER");
-			console.log(row);
 			done(null, dbRowID); 
 		}
+		if (row.length == 0){
+			dumpDBUser();
+			console.log("IT IS empty");
+			console.log(row);
+			let cmdStr = 'INSERT INTO UserInformation(GoogleID, firstName, lastName) VALUES(@0, @1, @2)';
+			db.run(cmdStr, profile.id , profile.name.givenName,  profile.name.familyName, (err) => {
+			if (err) {
+				console.log("Table creation error",err);
+			} 
+			else {
+				dumpDBUser();
+				console.log("We added the new user!");
+			}
+			done(null, dbRowID);
+			
+			});
+		}
 		else{
-			console.log("WE NEED TO ADD IT");
+			dumpDBUser();
+			console.log("Should be there ", row);
 			done(null, dbRowID); 
 		}
 	});
 
-    let dbRowID = profile.id;  // temporary! Should be the real unique
+     // temporary! Should be the real unique
     // key for db Row for this user in DB table.
     // Note: cannot be zero, has to be something that evaluates to
     // True.  
@@ -281,9 +297,30 @@ passport.deserializeUser((dbRowID, done) => {
     console.log("deserializeUser. Input is:", dbRowID);
     // here is a good place to look up user data in database using
     // dbRowID. Put whatever you want into an object. It ends up
-    // as the property "user" of the "req" object. 
-    let userData = {userData: dbRowID};
-    done(null, userData);
+	// as the property "user" of the "req" object. 
+	
+	let searchCmd = "SELECT * FROM UserInformation WHERE GoogleID ='"+ dbRowID + "'";
+	console.log("THe search command was ", searchCmd);
+	db.all(searchCmd, (err, row) => {
+		if (err){
+			console.log("There was an error in this");
+			let userData = {userData: dbRowID};
+			done(null, userData);
+		}
+		if (row.length == 0){
+			console.log("The length was 0");
+			let userData = {userData: dbRowID};
+			done(null, userData);
+			
+		}
+		else{
+			console.log("We found it in deserializerUser");
+			console.log("Should be there ", row);
+			let userData = {userData: dbRowID, name: row[0].firstName};
+			done(null, userData); 
+		}
+	});
+
 });
 
 
@@ -336,7 +373,8 @@ function retrieveCards(req, res){
 		if (rows){
 			console.log("Here is the result");
 			console.log(rows);
-			res.json(rows);
+			let obj = {cards: rows, name: req.user.name}
+			res.json(obj);
 		}
 		else{
 			console.log("it was empty?")

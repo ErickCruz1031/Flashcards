@@ -139,7 +139,7 @@ function FooterCreation() {
 
         React.createElement(
             "div",
-            { className: "footer-item" },
+            { className: "footer-item" , id:"footer-name"},
             " Username"
         )
     );
