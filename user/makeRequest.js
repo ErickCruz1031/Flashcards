@@ -3,12 +3,30 @@
 // Do a CORS request to get Davis weather hourly forecast
 
 let cards = null;
-let lastIndex = -1;
+let scores = null;
+let lastIndex = 0;
 
+function getScore(index){
+  let score = Math.max(1, 5 - cards[index].correct) + Math.max (1, 5 - cards[index].seen) + 5*((cards[index].seen - cards[index].corrext)/cards[index].seen);
+  return score;
+}
 
 
 function nextCard(){
-  lastIndex += 1;
+
+  let randIndex = Math.floor(Math.random() * cards.length); //random number between 0 and the length of cards
+  let current_score = getScore(randIndex);
+  let random_num =  Math.floor(Math.random() * 16); //random number between 0 and 15 
+
+  while(random_num > current_score)
+  {
+    randIndex = Math.floor(Math.random() * cards.length);
+    current_score = getScore(randIndex);
+    random_num =  Math.floor(Math.random() * 16); 
+  }
+
+  lastIndex = randIndex;
+  console.log("The size of the cards is ", cards.length, " and we chose ", lastIndex);
   console.log("Value going in " ,document.getElementById("box-two-review").value );
   if (lastIndex >= cards.length)
   {
@@ -29,6 +47,12 @@ function renderCard(event){
     return;
   }
 
+  if (lastIndex >= cards.length)
+  {
+    console.log("We ran out of cards Broo");
+    return;
+  } 
+
   event.preventDefault();
 
   console.log("Now the index is ", lastIndex);
@@ -37,6 +61,7 @@ function renderCard(event){
   document.getElementById("box-two-review").value = ""; //The user input
   let answerString = cards[lastIndex].english;
   let an_key = answerString.toLowerCase();
+  input = input.toLowerCase();
   console.log("The key is ", an_key, " and the input is ", input);
   console.log("The index is ", lastIndex);
   if (input == an_key)
