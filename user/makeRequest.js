@@ -16,6 +16,8 @@ function nextCard(){
     return;
   } //Check if you are out of cards
   document.getElementById("box-one-review").placeholder = cards[lastIndex].spanish;
+  document.getElementById("box-one-review").style.background = "white";
+  //document.getElementById("box-one-review").placeholder.style.color = "black";
   document.getElementById("box-two-review").placeholder = "Answer";
 
 
@@ -39,7 +41,11 @@ function renderCard(event){
   console.log("The index is ", lastIndex);
   if (input == an_key)
   {
-    document.getElementById("box-two-review").placeholder = "Correct!";
+    console.log("It was right!");
+    document.getElementById("box-one-review").placeholder = "Correct!";
+    document.getElementById("box-one-review").style.background = "rgb(155, 245, 202)";
+    document.getElementById("box-two-review").value = "";
+    document.getElementById("box-two-review").placeholder = cards[lastIndex].english;
   }
   else
   {
