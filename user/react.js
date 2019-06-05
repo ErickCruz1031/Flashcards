@@ -181,9 +181,16 @@ function makeReviewDOM()
 
 function makeRegDOM()
 {
+    document.getElementById("box-one-review").placeholder = "English";
+    document.getElementById("box-one-review").style.background = "white";
+    document.getElementById("box-two-review").placeholder = "Translation";
     document.removeEventListener('keypress', renderCard);
     ReactDOM.render(createDOM(), document.getElementById('root'));
     document.addEventListener('keypress', makeCorsRequestTranslate);
+
+
+    //document.getElementById("box-one").placeholder = "English"
+    //document.getElementById("box-two").placeholder = "Translation"
     //document.getElementById("save-button").addEventListener('click', makeCorsRequestSave);
     //document.getElementById("startButton").addEventListener('click', makeReviewDOM);
     console.log("YEA the other one");
