@@ -3,11 +3,13 @@
 // Do a CORS request to get Davis weather hourly forecast
 
 let cards = null;
-let lastIndex = 0;
+let lastIndex = -1;
 
 
 
 function nextCard(){
+  lastIndex += 1;
+  console.log("Value going in " ,document.getElementById("box-two-review").value );
   if (lastIndex >= cards.length)
   {
     console.log("We ran out of cards");
@@ -15,7 +17,7 @@ function nextCard(){
   } //Check if you are out of cards
   document.getElementById("box-one-review").placeholder = cards[lastIndex].spanish;
   document.getElementById("box-two-review").placeholder = "Answer";
-  lastIndex += 1;
+
 
 }
 
@@ -25,9 +27,13 @@ function renderCard(event){
     return;
   }
 
-  let input = document.getElementById("box-two-review").value; //The user input 
-  document.getElementById("box-two-review").value = ""; //The user input 
-  let answerString = cards[lastIndex].spanish;
+  event.preventDefault();
+
+  console.log("Now the index is ", lastIndex);
+
+  let input = document.getElementById("box-two-review").value; //The user input
+  document.getElementById("box-two-review").value = ""; //The user input
+  let answerString = cards[lastIndex].english;
   let an_key = answerString.toLowerCase();
   console.log("The key is ", an_key, " and the input is ", input);
   console.log("The index is ", lastIndex);
@@ -37,8 +43,12 @@ function renderCard(event){
   }
   else
   {
-    document.getElementById("box-two-review").value = cards[lastIndex].english;
+    //document.getElementById("box-two-review").value = cards[lastIndex].english;
+    document.getElementById("box-two-review").value = "";
+    document.getElementById("box-two-review").placeholder = cards[lastIndex].english;
+
     console.log("WE put inside ",cards[lastIndex].english );
+    console.log("Value is " ,document.getElementById("box-two-review").value );
   }
 
   return;
