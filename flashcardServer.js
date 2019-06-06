@@ -303,14 +303,14 @@ passport.deserializeUser((dbRowID, done) => {
 		}
 		if (row.length == 0){
 			console.log("The length was 0");
-			let userData = {userData: dbRowID};
+			let userData = {userData: dbRowID, hasCards: false};
 			done(null, userData);
 
 		}
 		else{
 			console.log("We found it in deserializerUser");
 			console.log("Should be there ", row);
-			let userData = {userData: dbRowID, name: row[0].firstName};
+			let userData = {userData: dbRowID, name: row[0].firstName, hasCards: true};
 			done(null, userData);
 		}
 	});
@@ -356,7 +356,14 @@ function storeHandle(req, res){
 }
 
 function retrieveCards(req, res){
+	/*
 	console.log("You asked to get teh cards for ", req.user.userData);
+	if (req.user.hasCards == false)
+	{
+		let obj = {cards: null, name: req.user.name, ready: false};
+		res.json(obj);
+	}
+	*/
 
 	let searchCmd = "SELECT * FROM Flashcards WHERE user ='"+ req.user.userData+ "'";
 	db.all(searchCmd, (err, rows) => {
@@ -367,7 +374,7 @@ function retrieveCards(req, res){
 		if (rows){
 			console.log("Here is the result");
 			console.log(rows);
-			let obj = {cards: rows, name: req.user.name}
+			let obj = {cards: rows, name: req.user.name, ready: true};
 			res.json(obj);
 		}
 		else{

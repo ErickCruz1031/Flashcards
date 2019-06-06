@@ -5,6 +5,9 @@
 let cards = null;
 let scores = null;
 let lastIndex = 0;
+let status = false;
+let firstTime = true;
+let username = null;
 
 function getScore(index){
   let score = Math.max(1, 5 - cards[index].correct) + Math.max (1, 5 - cards[index].seen) + 5*((cards[index].seen - cards[index].corrext)/cards[index].seen);
@@ -98,6 +101,7 @@ function createCORSRequest(method, url) {
 // Make the actual CORS request to retrieve cards
 function makeCorsRequestGetCards() {
 
+
   let url = "getCards";
 
   let xhr = createCORSRequest('GET', url);
@@ -117,12 +121,49 @@ function makeCorsRequestGetCards() {
       console.log("The length is ",object.length)
       console.log("The other one with length is ",responseStr.length)
       cards = object.cards;
+      username = object.name;
+      
+      //status = object.ready;
+      if (cards.length == 0) { status = false}
+      else{ status = true}
       console.log("Now the cards object is ", cards);
       console.log("The name is ", object.name);
-      document.getElementById("footer-name").textContent = object.name;
+      console.log("The status is ", object.ready);
+      if (firstTime)
+      {
+        console.log("Checking");
+        if (status)
+        {
+          console.log("Rendering the review dom");
+          makeReviewDOM();
+        }
+        else{
+          console.log("Rendering the regular dom");
+          makeRegDOM();
+          document.getElementById("footer-name").textContent = object.name;
+        }
+        //makeReviewDOM();
+        //document.getElementById("footer-name").textContent = object.name;
+        return;
+      }
+      else{
+        if (!firstTime && (cards.length == 0))
+        {
+          makeRegDOM();
+          console.log("Not the first time but the user still has no cards");
+          return;
+        }
+        console.log("Ran into the else");
+        document.getElementById("footer-name").textContent = object.name;
+        nextCard(); //To render the new card
+        return;
+      }
+
+
+      
       //console.log(responseStr);  // print it out as a string, nicely formatted
       //console.log("The spanish is " + object.spanish);
-      nextCard(); //To render the new card
+      //nextCard(); //To render the new card
 
   };
 
@@ -144,6 +185,8 @@ function makeCorsRequestTranslate(event) {
   {
     return;
   }
+
+  event.preventDefault();
 
 
 
