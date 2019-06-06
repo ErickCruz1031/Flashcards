@@ -19,7 +19,7 @@ const url_total = "https://translation.googleapis.com/language/translate/v2?key=
 
 // Google login credentials, used when the user contacts
 // Google, to tell them where he is trying to login to, and show
-// that this domain is registered for this service. 
+// that this domain is registered for this service.
 // Google will respond with a key we can use to retrieve profile
 // information, packed into a redirect response that redirects to
 // server162.site:[port]/auth/redirect
@@ -29,12 +29,12 @@ const googleLoginData = {
     callbackURL: '/auth/redirect'
 };
 
-// Strategy configuration. 
+// Strategy configuration.
 // Tell passport we will be using login with Google, and
 // give it our data for registering us with Google.
 // The gotProfile callback is for the server's HTTPS request
 // to Google for the user's profile information.
-// It will get used much later in the pipeline. 
+// It will get used much later in the pipeline.
 passport.use( new GoogleStrategy(googleLoginData, gotProfile) );
 
 
@@ -47,19 +47,19 @@ passport.use( new GoogleStrategy(googleLoginData, gotProfile) );
 app.use('/', printURL);
 
 // Check validity of cookies at the beginning of pipeline
-// Will get cookies out of request, decrypt and check if 
-// session is still going on. 
+// Will get cookies out of request, decrypt and check if
+// session is still going on.
 app.use(cookieSession({
     maxAge: 6 * 60 * 60 * 1000, // Six hours in milliseconds
     // meaningless random string used by encryption
-    keys: ['hanger waldo mercy dance']  
+    keys: ['hanger waldo mercy dance']
 }));
 
 // Initializes request object for further handling by passport
-app.use(passport.initialize()); 
+app.use(passport.initialize());
 
 // If there is a valid cookie, will call deserializeUser()
-app.use(passport.session()); 
+app.use(passport.session());
 
 
 
@@ -77,10 +77,10 @@ app.get('/auth/google',
 	passport.authenticate('google',{ scope: ['profile'] }) );
 // passport.authenticate sends off the 302 response
 // with fancy redirect URL containing request for profile, and
-// client ID string to identify this app. 
+// client ID string to identify this app.
 
 // Google redirects here after user successfully logs in
-// This route has three handler functions, one run after the other. 
+// This route has three handler functions, one run after the other.
 app.get('/auth/redirect',
 	// for educational purposes
 	function (req, res, next) {
@@ -88,13 +88,13 @@ app.get('/auth/redirect',
 	    next();
 	},
 	// This will issue Server's own HTTPS request to Google
-	// to access the user's profile information with the 
-	// temporary key we got in the request. 
+	// to access the user's profile information with the
+	// temporary key we got in the request.
 	passport.authenticate('google'),
 	// then it will run the "gotProfile" callback function,
-	// set up the cookie, call serialize, whose "done" 
+	// set up the cookie, call serialize, whose "done"
 	// will come back here to send back the response
-	// ...with a cookie in it for the Browser! 
+	// ...with a cookie in it for the Browser!
 	function (req, res) {
 	    console.log('Logged in and using cookies!')
 	    res.redirect('/user/lango.html');
@@ -103,10 +103,10 @@ app.get('/auth/redirect',
 // static files in /user are only available after login
 app.get('/user/*',
     isAuthenticated, // only pass on to following function if
-	// user is logged in 
+	// user is logged in
 	// serving files that start with /user from here gets them from ./
-	express.static('.') 
-       ); 
+	express.static('.')
+       );
 
 // next, all queries (like translate or store or get...
 //app.get('/query', function (req, res) { res.send('HTTP query!') });
@@ -124,7 +124,7 @@ app.post('/user/store', storeHandle);
 app.use( fileNotFound );
 
 
-// Pipeline is ready. Start listening!  
+// Pipeline is ready. Start listening!
 //app.listen(53232, function (){console.log('Listening...');} );
 
 
@@ -159,29 +159,23 @@ function fileNotFound(req, res) {
     }
 
 // Some functions Passport calls, that we can use to specialize.
-// This is where we get to write our own code, not just boilerplate. 
+// This is where we get to write our own code, not just boilerplate.
 // The callback "done" at the end of each one resumes Passport's
-// internal process. 
+// internal process.
 
 // function called during login, the second time passport.authenticate
 // is called (in /auth/redirect/),
-// once we actually have the profile data from Google. 
+// once we actually have the profile data from Google.
 function gotProfile(accessToken, refreshToken, profile, done) {
     console.log("Google profile ID is ",profile);
     // here is a good place to check if user is in DB,
-    // and to store him in DB if not already there. 
+    // and to store him in DB if not already there.
     // Second arg to "done" will be passed into serializeUser,
 	// should be key to get user out of database.
-	
+
 	//Check if the user is already in the database
 
-
-	/*
-	let searchCmd = "SELECT * FROM UserInformation WHERE GoogleID ='"+ profile.id + "'";
-	//let searchCmd = 'SELECT ' +  profile.id + ' FROM UserInformation';
-	console.log("THe search command was ", searchCmd);
-	db.get(searchCmd, tableSearchCallback(profile));
-	*/
+ //Check if the user is in the databse. If not, add them to database
 	let dbRowID = profile.id;
 
 	let searchCmd = "SELECT * FROM UserInformation WHERE GoogleID ='"+ profile.id + "'";
@@ -190,7 +184,7 @@ function gotProfile(accessToken, refreshToken, profile, done) {
 		if (err){
 			dumpDBUser();
 			console.log("There was an error in this");
-			done(null, dbRowID); 
+			done(null, dbRowID);
 		}
 		if (row.length == 0){
 			dumpDBUser();
@@ -200,30 +194,30 @@ function gotProfile(accessToken, refreshToken, profile, done) {
 			db.run(cmdStr, profile.id , profile.name.givenName,  profile.name.familyName, (err) => {
 			if (err) {
 				console.log("Table creation error",err);
-			} 
+			}
 			else {
 				dumpDBUser();
 				console.log("We added the new user!");
 			}
 			done(null, dbRowID);
-			
+
 			});
 		}
 		else{
 			dumpDBUser();
 			console.log("Should be there ", row);
-			done(null, dbRowID); 
+			done(null, dbRowID);
 		}
 	});
 
      // temporary! Should be the real unique
     // key for db Row for this user in DB table.
     // Note: cannot be zero, has to be something that evaluates to
-    // True.  
+    // True.
 
 
 	//THis was comemnted out
-    //done(null, dbRowID); 
+    //done(null, dbRowID);
 }
 
 // Always use the callback for database operations and print out any
@@ -239,14 +233,14 @@ function tableSearchCallback(prof, err, rowdata) {
 			console.log("We are adding the new user");
 			console.log("ERR is ", err);
 			/*
-			
+
 			let cmdStr = 'INSERT INTO UserInformation(GoogleID, firstName, lastName) VALUES(@0, @1, @2)';
 
 			//console.log("The command is the following: \n" + cmdStr);
 			db.run(cmdStr, prof.id , prof.name.givenName,  prof.name.familyName, tableInsertCallback);
 			*/
 
-			
+
 			let cmdStr = 'INSERT INTO UserInformation(GoogleID, firstName, lastName) VALUES(@0, @1, @2)';
 
 			//console.log("The command is the following: \n" + cmdStr);
@@ -259,8 +253,8 @@ function tableSearchCallback(prof, err, rowdata) {
 
 		dumpDBUser();
 	}
-	
-	
+
+
 }
 
 
@@ -280,25 +274,25 @@ function tableInsertCallback(err) {
     }
 }
 
-// Part of Server's sesssion set-up.  
+// Part of Server's sesssion set-up.
 // The second operand of "done" becomes the input to deserializeUser
-// on every subsequent HTTP request with this session's cookie. 
+// on every subsequent HTTP request with this session's cookie.
 passport.serializeUser((dbRowID, done) => {
     console.log("SerializeUser. Input is",dbRowID);
     done(null, dbRowID);
 });
 
 // Called by passport.session pipeline stage on every HTTP request with
-// a current session cookie. 
-// Where we should lookup user database info. 
+// a current session cookie.
+// Where we should lookup user database info.
 // Whatever we pass in the "done" callback becomes req.user
 // and can be used by subsequent middleware.
 passport.deserializeUser((dbRowID, done) => {
     console.log("deserializeUser. Input is:", dbRowID);
     // here is a good place to look up user data in database using
     // dbRowID. Put whatever you want into an object. It ends up
-	// as the property "user" of the "req" object. 
-	
+	// as the property "user" of the "req" object.
+
 	let searchCmd = "SELECT * FROM UserInformation WHERE GoogleID ='"+ dbRowID + "'";
 	console.log("THe search command was ", searchCmd);
 	db.all(searchCmd, (err, row) => {
@@ -311,13 +305,13 @@ passport.deserializeUser((dbRowID, done) => {
 			console.log("The length was 0");
 			let userData = {userData: dbRowID};
 			done(null, userData);
-			
+
 		}
 		else{
 			console.log("We found it in deserializerUser");
 			console.log("Should be there ", row);
 			let userData = {userData: dbRowID, name: row[0].firstName};
-			done(null, userData); 
+			done(null, userData);
 		}
 	});
 
