@@ -175,25 +175,22 @@ function makeReviewDOM()
         ReactDOM.render(createReviewDOM(), document.getElementById('root'));
         makeCorsRequestGetCards();
         document.addEventListener('keypress', renderCard);
+        //document.body.addEventListener('click', renderCard);
 
     }
     else
     {
+        firstTime = false;
         document.getElementById("box-one").value = "";
         document.getElementById("box-two").value = "";
     
         document.removeEventListener('keypress', makeCorsRequestTranslate);
-        //makeCorsRequestGetCards();
         ReactDOM.render(createReviewDOM(), document.getElementById('root'));
         document.addEventListener('keypress', renderCard);
         makeCorsRequestGetCards();
 
 
     }
-    //document.getElementById("addButton").addEventListener('click', makeRegDOM);
-
-    firstTime = false;
-    console.log("It was called");
     return;
 }
 
@@ -207,49 +204,34 @@ function makeRegDOM()
 
     }
     else{
+        firstTime = false;
         document.getElementById("box-one-review").placeholder = "English";
         document.getElementById("box-one-review").style.background = "white";
         document.getElementById("box-two-review").placeholder = "Translation";
+
         document.removeEventListener('keypress', renderCard);
+        //document.removeEventListener('click', renderCard);
+
         ReactDOM.render(createDOM(), document.getElementById('root'));
         document.addEventListener('keypress', makeCorsRequestTranslate);
     }
 
-    //document.getElementById("box-one").placeholder = "English"
-    //document.getElementById("box-two").placeholder = "Translation"
-    //document.getElementById("save-button").addEventListener('click', makeCorsRequestSave);
-    //document.getElementById("startButton").addEventListener('click', makeReviewDOM);
-    firstTime = false;
-    console.log("YEA the other one");
     return;
 
 }
 
 function renderNextCard()
 {
+    document.getElementById("box-one-review").value = "";
+    document.getElementById("box-two-review").value = "";
+
     ReactDOM.render(createReviewDOM(), document.getElementById('root'));
     nextCard();
-    console.log("We just did the new function");
     return;
 }
 
 
-console.log("Creating the DOM");
+
 makeCorsRequestGetCards();
 
-console.log("The cards are ", cards);
-console.log("The status is ", status);
 
-//ReactDOM.render(createDOM(), document.getElementById('root'));
-//document.addEventListener('keypress', makeCorsRequestTranslate);
-
-
-//document.addEventListener('keypress', makeCorsRequestTranslate);
-//document.getElementById("save-button").addEventListener('click', makeCorsRequestSave);
-
-
-//document.getElementById("startButton").addEventListener('click', makeReviewDOM);
-
-//ReactDOM.render(BoxContr(), document.getElementById('root'));
-//ReactDOM.render(LowButton(), document.getElementById('root'));
-//ReactDOM.render(FooterCreation(), document.getElementById('root'));

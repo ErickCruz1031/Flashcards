@@ -29,8 +29,7 @@ function nextCard(){
   }
 
   lastIndex = randIndex;
-  console.log("The size of the cards is ", cards.length, " and we chose ", lastIndex);
-  console.log("Value going in " ,document.getElementById("box-two-review").value );
+
   if (lastIndex >= cards.length)
   {
     console.log("We ran out of cards");
@@ -38,35 +37,38 @@ function nextCard(){
   } //Check if you are out of cards
   document.getElementById("box-one-review").placeholder = cards[lastIndex].spanish;
   document.getElementById("box-one-review").style.background = "white";
-  //document.getElementById("box-one-review").placeholder.style.color = "black";
   document.getElementById("box-two-review").placeholder = "Answer";
 
 
 }
 
 function renderCard(event){
-  if(event.charCode != 13)
+  let event_status = false;
+
+  if ((event.type == 'click') || (event.charCode == 13))
+  {
+    event_status = true;
+  }
+
+  if (!event_status)
   {
     return;
   }
 
   if (lastIndex >= cards.length)
   {
-    console.log("We ran out of cards Broo");
+    console.log("We ran out of cards");
     return;
   } 
 
   event.preventDefault();
-
-  console.log("Now the index is ", lastIndex);
 
   let input = document.getElementById("box-two-review").value; //The user input
   document.getElementById("box-two-review").value = ""; //The user input
   let answerString = cards[lastIndex].english;
   let an_key = answerString.toLowerCase();
   input = input.toLowerCase();
-  console.log("The key is ", an_key, " and the input is ", input);
-  console.log("The index is ", lastIndex);
+
   if (input == an_key)
   {
     console.log("It was right!");
@@ -80,9 +82,6 @@ function renderCard(event){
     //document.getElementById("box-two-review").value = cards[lastIndex].english;
     document.getElementById("box-two-review").value = "";
     document.getElementById("box-two-review").placeholder = cards[lastIndex].english;
-
-    console.log("WE put inside ",cards[lastIndex].english );
-    console.log("Value is " ,document.getElementById("box-two-review").value );
   }
 
   return;
@@ -116,34 +115,25 @@ function makeCorsRequestGetCards() {
   xhr.onload = function() {
       let responseStr = xhr.responseText;  // get the JSON string   // turn it into an object
       let object = JSON.parse(responseStr);  // turn it into an object
-      console.log("The object is " + object.name);
-      console.log("The othe rone is ", responseStr);
-      console.log("The length is ",object.length)
-      console.log("The other one with length is ",responseStr.length)
       cards = object.cards;
       username = object.name;
       
       //status = object.ready;
       if (cards.length == 0) { status = false}
       else{ status = true}
-      console.log("Now the cards object is ", cards);
-      console.log("The name is ", object.name);
-      console.log("The status is ", object.ready);
       if (firstTime)
       {
         console.log("Checking");
         if (status)
         {
-          console.log("Rendering the review dom");
+          console.log("Rendering the Review dom");
           makeReviewDOM();
         }
         else{
-          console.log("Rendering the regular dom");
+          console.log("Rendering the Regular dom");
           makeRegDOM();
           document.getElementById("footer-name").textContent = object.name;
         }
-        //makeReviewDOM();
-        //document.getElementById("footer-name").textContent = object.name;
         return;
       }
       else{
@@ -153,17 +143,10 @@ function makeCorsRequestGetCards() {
           console.log("Not the first time but the user still has no cards");
           return;
         }
-        console.log("Ran into the else");
         document.getElementById("footer-name").textContent = object.name;
         nextCard(); //To render the new card
         return;
       }
-
-
-      
-      //console.log(responseStr);  // print it out as a string, nicely formatted
-      //console.log("The spanish is " + object.spanish);
-      //nextCard(); //To render the new card
 
   };
 
@@ -223,7 +206,7 @@ function makeCorsRequestTranslate(event) {
 // Make the actual CORS request.
 function makeCorsRequestSave() {
 
-  console.log("requested to save");
+  console.log("Requested to save");
 
   let english = document.getElementById("box-one").value;
   let spanish = document.getElementById("box-two").value;

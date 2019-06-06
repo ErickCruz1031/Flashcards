@@ -188,7 +188,7 @@ function gotProfile(accessToken, refreshToken, profile, done) {
 		}
 		if (row.length == 0){
 			dumpDBUser();
-			console.log("IT IS empty");
+			console.log("The return statement is empty");
 			console.log(row);
 			let cmdStr = 'INSERT INTO UserInformation(GoogleID, firstName, lastName) VALUES(@0, @1, @2)';
 			db.run(cmdStr, profile.id , profile.name.givenName,  profile.name.familyName, (err) => {
@@ -205,7 +205,7 @@ function gotProfile(accessToken, refreshToken, profile, done) {
 		}
 		else{
 			dumpDBUser();
-			console.log("Should be there ", row);
+			console.log("User is already in the database ", row);
 			done(null, dbRowID);
 		}
 	});
@@ -214,10 +214,6 @@ function gotProfile(accessToken, refreshToken, profile, done) {
     // key for db Row for this user in DB table.
     // Note: cannot be zero, has to be something that evaluates to
     // True.
-
-
-	//THis was comemnted out
-    //done(null, dbRowID);
 }
 
 // Always use the callback for database operations and print out any
@@ -309,7 +305,7 @@ passport.deserializeUser((dbRowID, done) => {
 		}
 		else{
 			console.log("We found it in deserializerUser");
-			console.log("Should be there ", row);
+			console.log("Should user is ", row);
 			let userData = {userData: dbRowID, name: row[0].firstName, hasCards: true};
 			done(null, userData);
 		}
@@ -344,10 +340,7 @@ function storeHandle(req, res){
 
 	let queryData = urlParse.parse(req.url, true).query;
 	console.log(queryData)
-	//console.log("we got a storing function")
 
-	//console.log("The english is " + queryData.english);
-	//console.log("The spanish was " + queryData.spanish);
 	let cmdStr = 'INSERT INTO Flashcards (user, english, spanish, seen, correct) VALUES(@0, @1, @2, 0, 0)';
 
 	//console.log("The command is the following: \n" + cmdStr);
@@ -356,14 +349,7 @@ function storeHandle(req, res){
 }
 
 function retrieveCards(req, res){
-	/*
-	console.log("You asked to get teh cards for ", req.user.userData);
-	if (req.user.hasCards == false)
-	{
-		let obj = {cards: null, name: req.user.name, ready: false};
-		res.json(obj);
-	}
-	*/
+
 
 	let searchCmd = "SELECT * FROM Flashcards WHERE user ='"+ req.user.userData+ "'";
 	db.all(searchCmd, (err, rows) => {
@@ -372,13 +358,13 @@ function retrieveCards(req, res){
 			res.send("THere was an error");
 		}
 		if (rows){
-			console.log("Here is the result");
+			console.log("Here is the result:");
 			console.log(rows);
 			let obj = {cards: rows, name: req.user.name, ready: true};
 			res.json(obj);
 		}
 		else{
-			console.log("it was empty?")
+			console.log("It was empty?")
 			res.send("Nothing is there");
 		}
 	});
